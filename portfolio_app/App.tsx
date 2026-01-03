@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -7,15 +7,10 @@ import {
   StyleSheet,
   TouchableOpacity,
   Linking,
+  NativeSyntheticEvent,
+  LayoutChangeEvent,
+  ScrollView as RNScrollView,
 } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import HomeScreen from './src/screens/Home';
-import ProjectsScreen from './src/screens/Projects';
-import DegreesScreen from './src/screens/Degrees';
-
-const Tab = createBottomTabNavigator();
 
 const projects = [
   {
@@ -39,33 +34,42 @@ const projects = [
 ];
 
 export default function App() {
+  const scrollRef = useRef<RNScrollView | null>(null);
+  const [projectsY, setProjectsY] = useState<number | null>(null);
+
+  const handleScrollToProjects = () => {
+    if (projectsY != null && scrollRef.current) {
+      scrollRef.current.scrollTo({ y: projectsY, animated: true });
+    }
+  };
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => {
-            let name: any = 'home';
-            if (route.name === 'Projects') name = 'folder';
-            if (route.name === 'Degrees') name = 'school';
-            return <Ionicons name={name} size={size} color={color} />;
-          },
-        })}
-      >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Projects" component={ProjectsScreen} />
-        <Tab.Screen name="Degrees" component={DegreesScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <SafeAreaView style={styles.safe}>
+      <ScrollView ref={scrollRef} contentContainerStyle={styles.container}>
+        <Header onViewWork={handleScrollToProjects} />
+        <About />
+        <View
+          onLayout={(e: LayoutChangeEvent) => {
+            setProjectsY(e.nativeEvent.layout.y);
+          }}>
+          <Projects />
+        </View>
+        <Contact />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-function Header() {
+function Header({ onViewWork }: { onViewWork: () => void }) {
   return (
     <View style={styles.header}>
       <Text style={styles.name}>Sayoni</Text>
-      <Text style={styles.tagline}>Product-focused software engineer</Text>
-      <Text style={styles.wave}>👋</Text>
+      <Text style={styles.role}>Product-focused Software Engineer</Text>
+      <Text style={styles.oneLine}>I build accessible, performant apps that people enjoy using.</Text>
+
+      <TouchableOpacity style={styles.cta} activeOpacity={0.85} onPress={onViewWork}>
+        <Text style={styles.ctaText}>View My Work</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -90,9 +94,8 @@ function Projects() {
         <TouchableOpacity
           key={p.id}
           style={styles.card}
-          activeOpacity={0.8}
-          onPress={() => Linking.openURL(p.url)}
-        >
+          activeOpacity={0.85}
+          onPress={() => Linking.openURL(p.url)}>
           <Text style={styles.cardTitle}>{p.title}</Text>
           <Text style={styles.cardBody}>{p.description}</Text>
         </TouchableOpacity>
@@ -104,14 +107,13 @@ function Projects() {
 function Contact() {
   const email = 'hello@example.com';
   return (
-    <View style={[styles.section, styles.contactSection]}>
+    <View style={[styles.section, styles.contact]}>
       <Text style={styles.sectionTitle}>Contact</Text>
       <Text style={styles.paragraph}>Interested in collaborating? Reach out:</Text>
       <TouchableOpacity
-        style={styles.contactButton}
-        onPress={() => Linking.openURL(`mailto:${email}`)}
-      >
-        <Text style={styles.contactButtonText}>{email}</Text>
+        style={styles.emailButton}
+        onPress={() => Linking.openURL(`mailto:${email}`)}>
+        <Text style={styles.emailText}>{email}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -119,42 +121,25 @@ function Contact() {
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
-  container: {
-    padding: 20,
-    paddingBottom: 48,
+  container: { padding: 20, paddingBottom: 48 },
+  header: { marginBottom: 24, paddingHorizontal: 2 },
+  name: { fontSize: 36, fontWeight: '700', color: '#0f172a' },
+  role: { marginTop: 6, fontSize: 16, color: '#334155' },
+  oneLine: { marginTop: 12, fontSize: 15, color: '#475569', lineHeight: 22 },
+  cta: {
+    marginTop: 18,
+    backgroundColor: '#0ea5a4',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+    alignSelf: 'flex-start',
   },
-  header: {
-    alignItems: 'flex-start',
-    marginBottom: 20,
-  },
-  name: {
-    fontSize: 36,
-    fontWeight: '700',
-    color: '#0f172a',
-  },
-  tagline: {
-    marginTop: 6,
-    fontSize: 16,
-    color: '#334155',
-  },
-  wave: {
-    marginTop: 10,
-    fontSize: 28,
-  },
-  section: {
-    marginTop: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#0f172a',
-    marginBottom: 8,
-  },
-  paragraph: {
-    color: '#475569',
-    fontSize: 15,
-    lineHeight: 22,
-  },
+  ctaText: { color: '#fff', fontWeight: '600' },
+
+  section: { marginTop: 20 },
+  sectionTitle: { fontSize: 20, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
+  paragraph: { color: '#475569', fontSize: 15, lineHeight: 22 },
+
   card: {
     backgroundColor: '#f8fafc',
     padding: 12,
@@ -163,27 +148,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e2e8f0',
   },
-  cardTitle: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#0f172a',
-  },
-  cardBody: {
-    marginTop: 6,
-    color: '#475569',
-  },
-  contactSection: {
-    alignItems: 'flex-start',
-  },
-  contactButton: {
+  cardTitle: { fontSize: 16, fontWeight: '600', color: '#0f172a' },
+  cardBody: { marginTop: 6, color: '#475569' },
+
+  contact: { alignItems: 'flex-start' },
+  emailButton: {
     marginTop: 10,
     backgroundColor: '#0ea5a4',
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 8,
   },
-  contactButtonText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
+  emailText: { color: '#fff', fontWeight: '600' },
 });
