@@ -78,9 +78,24 @@ function About() {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>About</Text>
+
       <Text style={styles.paragraph}>
-        I build useful, accessible applications with attention to performance and UX.
-        I enjoy working across the stack and learning new tools.
+        I'm an early-career software developer currently studying Computer Science.
+        I build small web and mobile projects to learn full-stack development and product thinking.
+      </Text>
+
+      <Text style={[styles.paragraph, { marginTop: 10 }]}>
+        Skills: JavaScript / TypeScript, React & React Native, basic Node.js, REST APIs, and Git.
+        I also have experience with UI fundamentals, responsive layouts, and testing.
+      </Text>
+
+      <Text style={[styles.paragraph, { marginTop: 10 }]}>
+        Interests: user-centered design, accessibility, performance optimization, and learning new
+        tools that help ship polished products quickly.
+      </Text>
+
+      <Text style={[styles.paragraph, { marginTop: 10 }]}>
+        I'm open to internships, mentoring, and collaborative projects — happy to chat!
       </Text>
     </View>
   );
