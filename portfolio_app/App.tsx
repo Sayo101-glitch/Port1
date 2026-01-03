@@ -12,23 +12,34 @@ import {
   ScrollView as RNScrollView,
 } from 'react-native';
 
-const projects = [
+type Project = {
+  id: string;
+  title: string;
+  description: string;
+  tech: string[];
+  url: string;
+};
+
+const projects: Project[] = [
   {
     id: 'p1',
     title: 'Personal Website',
     description: 'A responsive portfolio built with React Native Web and Expo.',
+    tech: ['React', 'Expo', 'TypeScript'],
     url: 'https://example.com',
   },
   {
     id: 'p2',
     title: 'Mobile App',
     description: 'Cross-platform app showcasing animations and offline sync.',
+    tech: ['React Native', 'Redux', 'SQLite'],
     url: 'https://example.com',
   },
   {
     id: 'p3',
     title: 'Open Source Lib',
     description: 'A small utility library published on npm with docs.',
+    tech: ['TypeScript', 'Node', 'Jest'],
     url: 'https://example.com',
   },
 ];
@@ -101,19 +112,32 @@ function About() {
   );
 }
 
+function ProjectCard({ project }: { project: Project }) {
+  return (
+    <TouchableOpacity
+      activeOpacity={0.9}
+      style={styles.projectCard}
+      onPress={() => Linking.openURL(project.url)}
+    >
+      <Text style={styles.cardTitle}>{project.title}</Text>
+      <Text style={styles.cardBody}>{project.description}</Text>
+      <View style={styles.techRow}>
+        {project.tech.map((t) => (
+          <View key={t} style={styles.techPill}>
+            <Text style={styles.techText}>{t}</Text>
+          </View>
+        ))}
+      </View>
+    </TouchableOpacity>
+  );
+}
+
 function Projects() {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>Projects</Text>
       {projects.map((p) => (
-        <TouchableOpacity
-          key={p.id}
-          style={styles.card}
-          activeOpacity={0.85}
-          onPress={() => Linking.openURL(p.url)}>
-          <Text style={styles.cardTitle}>{p.title}</Text>
-          <Text style={styles.cardBody}>{p.description}</Text>
-        </TouchableOpacity>
+        <ProjectCard key={p.id} project={p} />
       ))}
     </View>
   );
@@ -155,16 +179,33 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 20, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
   paragraph: { color: '#475569', fontSize: 15, lineHeight: 22 },
 
-  card: {
+  projectCard: {
     backgroundColor: '#f8fafc',
-    padding: 12,
-    borderRadius: 8,
-    marginTop: 10,
+    padding: 14,
+    borderRadius: 10,
+    marginTop: 12,
     borderWidth: 1,
     borderColor: '#e2e8f0',
   },
   cardTitle: { fontSize: 16, fontWeight: '600', color: '#0f172a' },
   cardBody: { marginTop: 6, color: '#475569' },
+  techRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 10,
+    gap: 8,
+  },
+  techPill: {
+    backgroundColor: '#eef2f7',
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    borderRadius: 999,
+    marginRight: 6,
+  },
+  techText: {
+    fontSize: 12,
+    color: '#334155',
+  },
 
   contact: { alignItems: 'flex-start' },
   emailButton: {
