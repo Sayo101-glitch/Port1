@@ -145,15 +145,34 @@ function Projects() {
 
 function Contact() {
   const email = 'hello@example.com';
+  const linkedin = 'https://www.linkedin.com/in/your-profile';
+  const github = 'https://github.com/your-username';
+
   return (
     <View style={[styles.section, styles.contact]}>
       <Text style={styles.sectionTitle}>Contact</Text>
       <Text style={styles.paragraph}>Interested in collaborating? Reach out:</Text>
-      <TouchableOpacity
-        style={styles.emailButton}
-        onPress={() => Linking.openURL(`mailto:${email}`)}>
-        <Text style={styles.emailText}>{email}</Text>
-      </TouchableOpacity>
+
+      <View style={styles.contactRow}>
+        <Text style={styles.contactLabel}>Email</Text>
+        <TouchableOpacity onPress={() => Linking.openURL(`mailto:${email}`)}>
+          <Text style={styles.contactLink}>{email}</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.contactRow}>
+        <Text style={styles.contactLabel}>LinkedIn</Text>
+        <TouchableOpacity onPress={() => Linking.openURL(linkedin)}>
+          <Text style={styles.contactLink}>linkedin.com/in/your-profile</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.contactRow}>
+        <Text style={styles.contactLabel}>GitHub</Text>
+        <TouchableOpacity onPress={() => Linking.openURL(github)}>
+          <Text style={styles.contactLink}>github.com/your-username</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }
@@ -208,12 +227,18 @@ const styles = StyleSheet.create({
   },
 
   contact: { alignItems: 'flex-start' },
-  emailButton: {
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 10,
-    backgroundColor: '#0ea5a4',
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 8,
   },
-  emailText: { color: '#fff', fontWeight: '600' },
+  contactLabel: {
+    width: 80,
+    color: '#475569',
+    fontWeight: '600',
+  },
+  contactLink: {
+    color: '#0ea5a4',
+    fontWeight: '600',
+  },
 });
