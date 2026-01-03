@@ -11,6 +11,7 @@ import {
   LayoutChangeEvent,
   ScrollView as RNScrollView,
 } from 'react-native';
+import { Ionicons, FontAwesome, Entypo } from '@expo/vector-icons';
 
 type Project = {
   id: string;
@@ -88,7 +89,7 @@ function Header({ onViewWork }: { onViewWork: () => void }) {
 function About() {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>About</Text>
+      <SectionHeader iconName="information-circle-outline" title="About" />
 
       <Text style={styles.paragraph}>
         I'm an early-career software developer currently studying Computer Science.
@@ -135,7 +136,7 @@ function ProjectCard({ project }: { project: Project }) {
 function Projects() {
   return (
     <View style={styles.section}>
-      <Text style={styles.sectionTitle}>Projects</Text>
+      <SectionHeader iconName="code-slash-outline" title="Projects" />
       {projects.map((p) => (
         <ProjectCard key={p.id} project={p} />
       ))}
@@ -150,10 +151,11 @@ function Contact() {
 
   return (
     <View style={[styles.section, styles.contact]}>
-      <Text style={styles.sectionTitle}>Contact</Text>
+      <SectionHeader iconName="mail-outline" title="Contact" />
       <Text style={styles.paragraph}>Interested in collaborating? Reach out:</Text>
 
       <View style={styles.contactRow}>
+        <Ionicons name="mail-outline" size={18} color="#0ea5a4" style={styles.contactIcon} />
         <Text style={styles.contactLabel}>Email</Text>
         <TouchableOpacity onPress={() => Linking.openURL(`mailto:${email}`)}>
           <Text style={styles.contactLink}>{email}</Text>
@@ -161,6 +163,7 @@ function Contact() {
       </View>
 
       <View style={styles.contactRow}>
+        <Entypo name="linkedin" size={18} color="#0ea5a4" style={styles.contactIcon} />
         <Text style={styles.contactLabel}>LinkedIn</Text>
         <TouchableOpacity onPress={() => Linking.openURL(linkedin)}>
           <Text style={styles.contactLink}>linkedin.com/in/your-profile</Text>
@@ -177,68 +180,72 @@ function Contact() {
   );
 }
 
+function SectionHeader({ iconName, title }: { iconName: string; title: string }) {
+  return (
+    <View style={styles.sectionHeaderRow}>
+      <Ionicons name={iconName as any} size={20} color="#0ea5a4" style={styles.sectionIcon} />
+      <Text style={styles.sectionTitle}>{title}</Text>
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: '#fff' },
-  container: { padding: 20, paddingBottom: 48 },
-  header: { marginBottom: 24, paddingHorizontal: 2 },
-  name: { fontSize: 36, fontWeight: '700', color: '#0f172a' },
-  role: { marginTop: 6, fontSize: 16, color: '#334155' },
-  oneLine: { marginTop: 12, fontSize: 15, color: '#475569', lineHeight: 22 },
+  container: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 48 },
+
+  // Hero / header
+  header: { marginBottom: 28, alignItems: 'flex-start' },
+  name: { fontSize: 34, lineHeight: 40, fontWeight: '700', color: '#0f172a' },
+  role: { marginTop: 6, fontSize: 15, lineHeight: 20, color: '#334155', fontWeight: '600' },
+  oneLine: { marginTop: 12, fontSize: 15, lineHeight: 22, color: '#475569' },
   cta: {
-    marginTop: 18,
+    marginTop: 16,
     backgroundColor: '#0ea5a4',
     paddingVertical: 10,
     paddingHorizontal: 14,
     borderRadius: 8,
     alignSelf: 'flex-start',
   },
-  ctaText: { color: '#fff', fontWeight: '600' },
+  ctaText: { color: '#fff', fontWeight: '600', fontSize: 15 },
 
-  section: { marginTop: 20 },
-  sectionTitle: { fontSize: 20, fontWeight: '700', color: '#0f172a', marginBottom: 8 },
+  // Sections
+  section: { marginTop: 24 },
+  sectionHeaderRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 6 },
+  sectionIcon: { marginRight: 8 },
+  sectionTitle: { fontSize: 20, lineHeight: 26, fontWeight: '700', color: '#0f172a' },
   paragraph: { color: '#475569', fontSize: 15, lineHeight: 22 },
 
+  // Project card
   projectCard: {
-    backgroundColor: '#f8fafc',
-    padding: 14,
-    borderRadius: 10,
+    backgroundColor: '#fbfdfe',
+    padding: 16,
+    borderRadius: 12,
     marginTop: 12,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: '#e6eef2',
   },
   cardTitle: { fontSize: 16, fontWeight: '600', color: '#0f172a' },
-  cardBody: { marginTop: 6, color: '#475569' },
-  techRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 10,
-    gap: 8,
-  },
-  techPill: {
-    backgroundColor: '#eef2f7',
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    borderRadius: 999,
-    marginRight: 6,
-  },
-  techText: {
-    fontSize: 12,
-    color: '#334155',
-  },
+  cardBody: { marginTop: 8, color: '#475569', fontSize: 14, lineHeight: 20 },
 
-  contact: { alignItems: 'flex-start' },
-  contactRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
+  // Tech pills
+  techRow: { flexDirection: 'row', flexWrap: 'wrap', marginTop: 12 },
+  techPill: {
+    backgroundColor: '#eef6f6',
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 999,
+    marginRight: 8,
+    marginTop: 8,
   },
-  contactLabel: {
-    width: 80,
-    color: '#475569',
-    fontWeight: '600',
-  },
-  contactLink: {
-    color: '#0ea5a4',
-    fontWeight: '600',
-  },
+  techText: { fontSize: 12, color: '#1f3340' },
+
+  // Contact
+  contact: { alignItems: 'flex-start', marginTop: 20 },
+  contactRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  contactIcon: { marginRight: 8 },
+  contactLabel: { width: 80, color: '#64748b', fontWeight: '600', fontSize: 14 },
+  contactLink: { color: '#0ea5a4', fontWeight: '600', fontSize: 14 },
+
+  // Helpers
+  muted: { color: '#64748b' },
 });
